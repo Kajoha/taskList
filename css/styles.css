@@ -1,0 +1,36 @@
+/* Open sans font */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.new-task-form {
+  background-color: #eee;
+  padding: 2rem;
+  font-size: 1.125rem;
+}
+
+.new-task-form input {
+  font-size: 1.125rem;
+  border: none;
+  padding: 0.5rem;
+}
+
+.new-task-form input[type="submit"] {
+  padding: 0.5rem 1rem;
+  background-color: #666;
+  color: #fff;
+}
+
+.task-list {
+  list-style-type: none;
+  padding: 2rem;
+  margin: 0;
+}
+
+.task-list__item {
+  margin-bottom: 0.5rem;
+}
+
