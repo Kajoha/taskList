@@ -61,11 +61,17 @@ function appendTaskDOM(taskTask) {
     const label = document.createElement('label');
     label.setAttribute('for', `taskTask-${taskTask.id}`);
     label.innerHTML = `${taskTask.nombre} - ${taskTask.fecha}`;
+    // boton de borrar
+    const buttonDelete = document.createElement('button');
+    buttonDelete.className = 'task-list__delete';
+    buttonDelete.setAttribute('id', `delete-${taskTask.id}`);
+    buttonDelete.innerHTML = 'Delete';
     
     // Se agregan elementos.
     item.appendChild(checkbox);
     item.appendChild(label);
     list.appendChild(item);
+    item.appendChild(buttonDelete);
 }
 
 // se crea la lista del en el DOM con las tareas que existen
