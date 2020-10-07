@@ -38,7 +38,7 @@ function appendTaskDOM(taskTask) {
     // Label.
     const label = document.createElement('label');
     label.setAttribute('for', `taskTask-${taskTask.id}`);
-    label.innerHTML = `${tarea.nombre} - ${taskTask.fecha}`;
+    label.innerHTML = `${taskTask.nombre} - ${taskTask.fecha}`;
     
     // Se agregan elementos.
     item.appendChild(checkbox);
@@ -47,6 +47,20 @@ function appendTaskDOM(taskTask) {
 }
 
 // se crea la lista del en el DOM con las tareas que existen
-for (let i = 0; i < tareas.length; i++) {
+for (let i = 0; i < task.length; i++) {
     appendTaskDOM(task[i]);
 }
+
+// Aquí va lo correspondiente al contador
+
+const form = document.getElementById('new-task-form');
+//El evento de submit en del formulario
+form.addEventListener('submit', (event) => {
+    //cancelamos el comportamiento default del formulario de la siguiente manera
+    event.preventDefault();
+    //agregamos el item
+    addTask(form.elements[0].value, form.elements[1].value, false);
+    //Esto para reserear el form
+    form.elements[0].value = '';
+    form.elements[1].value = '';
+})
