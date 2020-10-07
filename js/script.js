@@ -5,8 +5,23 @@ let taskCounter = 0;
 // ahora creamos un array para almacenar las tareas
 let task = [];
 
-//Creamos la fución para añadir tareas
+//Empezamos a trabajar con el LocalStorage y almacenar las listas de tareas
+const dateLocalStorage = localStorage.getItem('task');
+if (dateLocalStorage) {
+    task = JSON.parse(dateLocalStorage);
+}
 
+// Aquí leemos el contador de tareas del localStorage
+const counterLocalStorage = localStorage.getItem('counter');
+console.log(counterLocalStorage);
+
+console.log(task);
+
+if (counterLocalStorage) {
+    taskCounter = parseInt(counterLocalStorage);
+}
+
+//Creamos la fución para añadir tareas
 function addTask(taskName, taskDate, taskCompleted) {
     //Se crea un objeto para la nueva tarea
     const newTask = {
@@ -20,6 +35,13 @@ function addTask(taskName, taskDate, taskCompleted) {
     task.push(newTask);
     // incrementamos el contador de la tarea
     taskCounter++;
+    // Guardamos el contador de tareas en el localStorage
+    localStorage.setItem('counter', taskCounter);
+    // Me faltaba agrega el apped para verlo en el DOM
+    appendTaskDOM(newTask);
+    //Guardamos la lista dentro del localStorage
+    localStorage.setItem('task', JSON.stringify(task));
+
 }
 
 // Aquí empezamos a añadir la Vista
@@ -43,7 +65,7 @@ function appendTaskDOM(taskTask) {
     // Se agregan elementos.
     item.appendChild(checkbox);
     item.appendChild(label);
-    lista.appendChild(item);
+    list.appendChild(item);
 }
 
 // se crea la lista del en el DOM con las tareas que existen
