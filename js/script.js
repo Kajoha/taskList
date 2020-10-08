@@ -41,8 +41,22 @@ function addTask(taskName, taskDate, taskCompleted) {
     appendTaskDOM(newTask);
     //Guardamos la lista dentro del localStorage
     localStorage.setItem('task', JSON.stringify(task));
+    //guardamos el chech
+    localStorage.getItem('check', )
 
 }
+
+//eliminar un elemento de localstorage
+// const deleteLocal = localStorage.removeItem('task');
+//console.log(deleteLocal);
+ 
+// creamos una función para eliminar las litas del DOM
+  /*function deleteList(event) {
+    const deleteTask = document.getElementsByClassName('task-list__delete');
+    deleteTask.remove();
+  }
+
+  document.getElementsByClassName('task-list__delete').addEventListener("click", deleteList);*/ 
 
 // Aquí empezamos a añadir la Vista
 
