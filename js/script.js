@@ -41,22 +41,34 @@ function addTask(taskName, taskDate, taskCompleted) {
     appendTaskDOM(newTask);
     //Guardamos la lista dentro del localStorage
     localStorage.setItem('task', JSON.stringify(task));
-    //guardamos el chech
-    localStorage.getItem('check', )
 
 }
 
-//eliminar un elemento de localstorage
-// const deleteLocal = localStorage.removeItem('task');
-//console.log(deleteLocal);
- 
-// creamos una función para eliminar las litas del DOM
-  /*function deleteList(event) {
-    const deleteTask = document.getElementsByClassName('task-list__delete');
-    deleteTask.remove();
-  }
+// Actualiza el estado de una tarea
+function taskStatus(id, complete) {
+//recorre la lista de tareas
+    for (let i = 0; i < task.length; i++){
+        //cuando encuentra la tarea con el id correcto cambia su estado
+        if (task[i].id === id) {
+            task[i].completo = complete;
+            console.log(task[i]);
+        }
+    }
+    localStorage.setItem('task', JSON.stringify(task));
+}
 
-  document.getElementsByClassName('task-list__delete').addEventListener("click", deleteList);*/ 
+//borrar una tarea 
+function deleteTask(id) {
+    //recorrer la lista de tareas
+    for (let i = 0; i < task.length; i++) {
+        //cuando encuentra la tarea con el id la borra
+        if (task[i].id === id) {
+            task.splice(i, 1);
+        }
+    }
+    // Guardar la lista de tareas actualizada en el localStoraage
+    localStorage.setItem('task', JSON.stringify(task));
+}
 
 // Aquí empezamos a añadir la Vista
 
@@ -86,6 +98,23 @@ function appendTaskDOM(taskTask) {
     item.appendChild(label);
     list.appendChild(item);
     item.appendChild(buttonDelete);
+
+    // Evento para marcar la tarea como completa
+    checkbox.addEventListener('click', (event) => {
+        const complete = event.currentTarget.checked;
+        const itemId = event.currentTarget.getAttribute('id');
+        const taskId = parseInt(itemId.substring(6));
+        taskStatus(taskId, complete);
+      });
+
+      // borramos la tarea
+    buttonDelete.addEventListener('click', (event) => {
+        const itemId = event.currentTarget.getAttribute('id');
+        const taskId = parseInt(itemId.substring(7));
+        deleteTask(taskId);
+        // Borra la tarea en el DOM.
+        event.currentTarget.parentNode.remove();
+      });  
 }
 
 // se crea la lista del en el DOM con las tareas que existen
