@@ -3,8 +3,6 @@
 /* eslint-disable no-use-before-define */
 
 // Esto es lo que va dentro del modelo
-
-let taskCounter = 0;
 let task = [];
 
 // Conexión al API usando fetch.
@@ -12,33 +10,30 @@ fetch('https://js2-tareas-api.netlify.app/api/tareas?uid=19')
   .then((response) => response.json())
   .then((data) => {
     task = data;
-
-    // se crea la lista del en el DOM con las tareas que existen
-    for (let i = 0; i < task.length; i++) {
-      appendTaskDOM(task[i]); // eslint-disable no-use-before-define
-    }
   });
 
 // Creamos la fución para añadir tareas
 function addTask(taskName, taskDate, taskCompleted) {
   // Se crea un objeto para la nueva tarea
   const newTask = {
-    _id: taskCounter,
     name: taskName,
     complete: taskCompleted,
     date: taskDate,
   };
 
   // agrego la tarea al array
-  task.push(newTask);
-  // incrementamos el contador de la tarea
-  taskCounter++;
-  // Guardamos el contador de tareas en el localStorage
-  localStorage.setItem('counter', taskCounter);
-  // Me faltaba agrega el apped para verlo en el DOM
-  appendTaskDOM(newTask);
-  // Guardamos la lista dentro del localStorage
-  localStorage.setItem('task', JSON.stringify(task));
+  task.push(addTask);
+
+  const fetchOptions = {
+    method: 'POST',
+    body: JSON.stringify(newTask),
+  };
+
+  fetch('https://js2-tareas-api.netlify.app/api/tareas?uid=19', fetchOptions)
+    .then((response) => response.json())
+    .then((data) => {
+      appendTaskDOM(data);
+    });
 }
 
 // Actualiza el estado de una tarea
@@ -46,7 +41,7 @@ function taskStatus(id, complete) {
 // recorre la lista de tareas
   for (let i = 0; i < task.length; i++) {
     // cuando encuentra la tarea con el id correcto cambia su estado
-    if (task[i].id === id) {
+    if (task[i]._id === id) {
       task[i].completo = complete;
     }
   }
@@ -58,12 +53,10 @@ function deleteTask(id) {
   // recorrer la lista de tareas
   for (let i = 0; i < task.length; i++) {
     // cuando encuentra la tarea con el id la borra
-    if (task[i].id === id) {
+    if (task[i]._id === id) {
       task.splice(i, 1);
     }
   }
-  // Guardar la lista de tareas actualizada en el localStoraage
-  localStorage.setItem('task', JSON.stringify(task));
 }
 
 // Aquí empezamos a añadir la Vista
@@ -119,11 +112,8 @@ function appendTaskDOM(taskTask) {
 const form = document.getElementById('new-task-form');
 // El evento de submit en del formulario
 form.addEventListener('submit', (event) => {
-  // cancelamos el comportamiento default del formulario de la siguiente manera
   event.preventDefault();
-  // agregamos el item
   addTask(form.elements[0].value, form.elements[1].value, false);
-  // Esto para reserear el form
   form.elements[0].value = '';
   form.elements[1].value = '';
 });
