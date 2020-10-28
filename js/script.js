@@ -1,137 +1,129 @@
-//Esto es lo que va dentro del modelo
+/* eslint-disable no-plusplus */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-use-before-define */
 
-// Iniciamos creando un contador para la lista de tareas para agrefarle un id unico a cada tarea
+// Esto es lo que va dentro del modelo
+
 let taskCounter = 0;
-// ahora creamos un array para almacenar las tareas
 let task = [];
 
-//Empezamos a trabajar con el LocalStorage y almacenar las listas de tareas
-const dateLocalStorage = localStorage.getItem('task');
-if (dateLocalStorage) {
-    task = JSON.parse(dateLocalStorage);
-}
+// Conexión al API usando fetch.
+fetch('https://js2-tareas-api.netlify.app/api/tareas?uid=19')
+  .then((response) => response.json())
+  .then((data) => {
+    task = data;
 
-// Aquí leemos el contador de tareas del localStorage
-const counterLocalStorage = localStorage.getItem('counter');
-console.log(counterLocalStorage);
+    // se crea la lista del en el DOM con las tareas que existen
+    for (let i = 0; i < task.length; i++) {
+      appendTaskDOM(task[i]); // eslint-disable no-use-before-define
+    }
+  });
 
-console.log(task);
-
-if (counterLocalStorage) {
-    taskCounter = parseInt(counterLocalStorage);
-}
-
-//Creamos la fución para añadir tareas
+// Creamos la fución para añadir tareas
 function addTask(taskName, taskDate, taskCompleted) {
-    //Se crea un objeto para la nueva tarea
-    const newTask = {
-        id: taskCounter,
-        nombre: taskName,
-        completo: taskCompleted,
-        fecha: taskDate,
-    };
+  // Se crea un objeto para la nueva tarea
+  const newTask = {
+    _id: taskCounter,
+    name: taskName,
+    complete: taskCompleted,
+    date: taskDate,
+  };
 
-    //agrego la tarea al array
-    task.push(newTask);
-    // incrementamos el contador de la tarea
-    taskCounter++;
-    // Guardamos el contador de tareas en el localStorage
-    localStorage.setItem('counter', taskCounter);
-    // Me faltaba agrega el apped para verlo en el DOM
-    appendTaskDOM(newTask);
-    //Guardamos la lista dentro del localStorage
-    localStorage.setItem('task', JSON.stringify(task));
-
+  // agrego la tarea al array
+  task.push(newTask);
+  // incrementamos el contador de la tarea
+  taskCounter++;
+  // Guardamos el contador de tareas en el localStorage
+  localStorage.setItem('counter', taskCounter);
+  // Me faltaba agrega el apped para verlo en el DOM
+  appendTaskDOM(newTask);
+  // Guardamos la lista dentro del localStorage
+  localStorage.setItem('task', JSON.stringify(task));
 }
 
 // Actualiza el estado de una tarea
 function taskStatus(id, complete) {
-//recorre la lista de tareas
-    for (let i = 0; i < task.length; i++){
-        //cuando encuentra la tarea con el id correcto cambia su estado
-        if (task[i].id === id) {
-            task[i].completo = complete;
-            console.log(task[i]);
-        }
+// recorre la lista de tareas
+  for (let i = 0; i < task.length; i++) {
+    // cuando encuentra la tarea con el id correcto cambia su estado
+    if (task[i].id === id) {
+      task[i].completo = complete;
     }
-    localStorage.setItem('task', JSON.stringify(task));
+  }
+  localStorage.setItem('task', JSON.stringify(task));
 }
 
-//borrar una tarea 
+// borrar una tarea
 function deleteTask(id) {
-    //recorrer la lista de tareas
-    for (let i = 0; i < task.length; i++) {
-        //cuando encuentra la tarea con el id la borra
-        if (task[i].id === id) {
-            task.splice(i, 1);
-        }
+  // recorrer la lista de tareas
+  for (let i = 0; i < task.length; i++) {
+    // cuando encuentra la tarea con el id la borra
+    if (task[i].id === id) {
+      task.splice(i, 1);
     }
-    // Guardar la lista de tareas actualizada en el localStoraage
-    localStorage.setItem('task', JSON.stringify(task));
+  }
+  // Guardar la lista de tareas actualizada en el localStoraage
+  localStorage.setItem('task', JSON.stringify(task));
 }
 
 // Aquí empezamos a añadir la Vista
 
-//Añadimos la lista de tarea, interactuamos con el DOM
+// Añadimos la lista de tarea, interactuamos con el DOM
 const list = document.getElementById('task-list');
 
 function appendTaskDOM(taskTask) {
-    //Item de la lista
-    const item = document.createElement('li');
-    item.className = 'task-list__item';
-    // checkbox
-    const checkbox = document.createElement('input');
-    checkbox.setAttribute('type', 'checkbox');
-    checkbox.setAttribute('id', `taskTask-${taskTask.id}`);
-    // Label.
-    const label = document.createElement('label');
-    label.setAttribute('for', `taskTask-${taskTask.id}`);
-    label.innerHTML = `${taskTask.nombre} - ${taskTask.fecha}`;
-    // boton de borrar
-    const buttonDelete = document.createElement('button');
-    buttonDelete.className = 'task-list__delete';
-    buttonDelete.setAttribute('id', `delete-${taskTask.id}`);
-    buttonDelete.innerHTML = 'Delete';
-    
-    // Se agregan elementos.
-    item.appendChild(checkbox);
-    item.appendChild(label);
-    list.appendChild(item);
-    item.appendChild(buttonDelete);
+  // Item de la lista
+  const item = document.createElement('li');
+  item.className = 'task-list__item';
+  // checkbox
+  const checkbox = document.createElement('input');
+  checkbox.setAttribute('type', 'checkbox');
+  checkbox.setAttribute('id', `taskTask-${taskTask._id}`);
+  checkbox.checked = taskTask.complete;
+  // Label.
+  const label = document.createElement('label');
+  label.setAttribute('for', `taskTask-${taskTask._id}`);
+  label.innerHTML = `${taskTask.name} - ${taskTask.date}`;
+  // boton de borrar
+  const buttonDelete = document.createElement('button');
+  buttonDelete.className = 'task-list__delete';
+  buttonDelete.setAttribute('id', `delete-${taskTask._id}`);
+  buttonDelete.innerHTML = 'Delete';
 
-    // Evento para marcar la tarea como completa
-    checkbox.addEventListener('click', (event) => {
-        const complete = event.currentTarget.checked;
-        const itemId = event.currentTarget.getAttribute('id');
-        const taskId = parseInt(itemId.substring(6));
-        taskStatus(taskId, complete);
-      });
+  // Se agregan elementos.
+  item.appendChild(checkbox);
+  item.appendChild(label);
+  list.appendChild(item);
+  item.appendChild(buttonDelete);
 
-      // borramos la tarea
-    buttonDelete.addEventListener('click', (event) => {
-        const itemId = event.currentTarget.getAttribute('id');
-        const taskId = parseInt(itemId.substring(7));
-        deleteTask(taskId);
-        // Borra la tarea en el DOM.
-        event.currentTarget.parentNode.remove();
-      });  
-}
+  // Evento para marcar la tarea como completa
+  checkbox.addEventListener('click', (event) => {
+    const complete = event.currentTarget.checked;
+    const itemId = event.currentTarget.getAttribute('id');
+    const taskId = parseInt(itemId.substring(6), 10);
+    taskStatus(taskId, complete);
+  });
 
-// se crea la lista del en el DOM con las tareas que existen
-for (let i = 0; i < task.length; i++) {
-    appendTaskDOM(task[i]);
+  // borramos la tarea
+  buttonDelete.addEventListener('click', (event) => {
+    const itemId = event.currentTarget.getAttribute('id');
+    const taskId = parseInt(itemId.substring(7), 10);
+    deleteTask(taskId);
+    // Borra la tarea en el DOM.
+    event.currentTarget.parentNode.remove();
+  });
 }
 
 // Aquí va lo correspondiente al contador
 
 const form = document.getElementById('new-task-form');
-//El evento de submit en del formulario
+// El evento de submit en del formulario
 form.addEventListener('submit', (event) => {
-    //cancelamos el comportamiento default del formulario de la siguiente manera
-    event.preventDefault();
-    //agregamos el item
-    addTask(form.elements[0].value, form.elements[1].value, false);
-    //Esto para reserear el form
-    form.elements[0].value = '';
-    form.elements[1].value = '';
-})
+  // cancelamos el comportamiento default del formulario de la siguiente manera
+  event.preventDefault();
+  // agregamos el item
+  addTask(form.elements[0].value, form.elements[1].value, false);
+  // Esto para reserear el form
+  form.elements[0].value = '';
+  form.elements[1].value = '';
+});
