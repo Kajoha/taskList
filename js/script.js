@@ -1,15 +1,18 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-use-before-define */
-
 // Esto es lo que va dentro del modelo
+const uid = 19;
 let task = [];
 
 // Conexión al API usando fetch.
-fetch('https://js2-tareas-api.netlify.app/api/tareas?uid=19')
+fetch(`https://js2-tareas-api.netlify.app/api/tareas?uid=${uid}`)
   .then((response) => response.json())
   .then((data) => {
     task = data;
+    for (let i = 0; i < task.length; i++) {
+      appendTaskDOM(task[i]);
+    }
   });
 
 // Creamos la fución para añadir tareas
@@ -22,14 +25,14 @@ function addTask(taskName, taskDate, taskCompleted) {
   };
 
   // agrego la tarea al array
-  task.push(addTask);
+  task.push(newTask);
 
   const fetchOptions = {
     method: 'POST',
     body: JSON.stringify(newTask),
   };
 
-  fetch('https://js2-tareas-api.netlify.app/api/tareas?uid=19', fetchOptions)
+  fetch(`https://js2-tareas-api.netlify.app/api/tareas?uid=${uid}`, fetchOptions)
     .then((response) => response.json())
     .then((data) => {
       appendTaskDOM(data);
@@ -38,14 +41,29 @@ function addTask(taskName, taskDate, taskCompleted) {
 
 // Actualiza el estado de una tarea
 function taskStatus(id, complete) {
-// recorre la lista de tareas
+  // recorre la lista de tareas
+  let _task = null;
+
   for (let i = 0; i < task.length; i++) {
     // cuando encuentra la tarea con el id correcto cambia su estado
     if (task[i]._id === id) {
-      task[i].completo = complete;
+      task[i].complete = complete;
+      // eslint-disable-next-line no-unused-vars
+      _task = task[i];
+      break;
     }
   }
-  localStorage.setItem('task', JSON.stringify(task));
+
+  const options = {
+    method: 'PUT',
+    body: JSON.stringify(_task),
+  };
+
+  fetch(`https://js2-tareas-api.netlify.app/api/tareas/${id}?uid=${uid}`, options)
+    .then((response) => response.json())
+    .then((data) => {
+      appendTaskDOM(data);
+    });
 }
 
 // borrar una tarea
@@ -55,8 +73,19 @@ function deleteTask(id) {
     // cuando encuentra la tarea con el id la borra
     if (task[i]._id === id) {
       task.splice(i, 1);
+      break;
     }
   }
+
+  const clear = {
+    method: 'DELETE',
+  };
+
+  fetch(`https://js2-tareas-api.netlify.app/api/tareas/${id}?uid=${uid}`, clear)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    });
 }
 
 // Aquí empezamos a añadir la Vista
@@ -93,14 +122,15 @@ function appendTaskDOM(taskTask) {
   checkbox.addEventListener('click', (event) => {
     const complete = event.currentTarget.checked;
     const itemId = event.currentTarget.getAttribute('id');
-    const taskId = parseInt(itemId.substring(6), 10);
+    // eslint-disable-next-line radix
+    const taskId = itemId.split('-')[1];
     taskStatus(taskId, complete);
   });
 
   // borramos la tarea
   buttonDelete.addEventListener('click', (event) => {
     const itemId = event.currentTarget.getAttribute('id');
-    const taskId = parseInt(itemId.substring(7), 10);
+    const taskId = itemId.split('-')[1];
     deleteTask(taskId);
     // Borra la tarea en el DOM.
     event.currentTarget.parentNode.remove();
