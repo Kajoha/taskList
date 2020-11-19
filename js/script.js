@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-use-before-define */
@@ -42,27 +43,24 @@ function addTask(taskName, taskDate, taskCompleted) {
 // Actualiza el estado de una tarea
 function taskStatus(id, complete) {
   // recorre la lista de tareas
-  let _task = null;
-
-  for (let i = 0; i < task.length; i++) {
-    // cuando encuentra la tarea con el id correcto cambia su estado
-    if (task[i]._id === id) {
-      task[i].complete = complete;
-      // eslint-disable-next-line no-unused-vars
-      _task = task[i];
-      break;
-    }
-  }
-
-  const options = {
-    method: 'PUT',
-    body: JSON.stringify(_task),
+  const taskMet = task.find((task) =>
+  task._id === id);
+  if (taskMet) {
+    taskMet.complete = complete;
+    const taskUpdated = {
+      name: taskUpdated.name,
+      complete,
+      date: taskUpdated.date,
+    };
+    const fetchOptions = {
+      method: 'PUT',
+      body: JSON.stringify(taskUpdated),
   };
 
-  fetch(`https://js2-tareas-api.netlify.app/api/tareas/${id}?uid=${uid}`, options)
+  fetch(`https://js2-tareas-api.netlify.app/api/tareas/${id}?uid=${uid}`, fetchOptions)
     .then((response) => response.json())
     .then((data) => {
-      appendTaskDOM(data);
+      console.log(data);
     });
 }
 
@@ -71,27 +69,25 @@ function deleteTask(id) {
   // recorrer la lista de tareas
   for (let i = 0; i < task.length; i++) {
     // cuando encuentra la tarea con el id la borra
-    if (task[i]._id === id) {
-      task.splice(i, 1);
-      break;
+    if (tareas[i]._id === id) {
+      tareas.splice(i, 1);
+      const fetchOptions = {
+        method: 'DELETE',
+      };
+
+      fetch(`https://js2-tareas-api.netlify.app/api/tareas/${id}?uid=${uid}`, fetchOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+    break;
     }
   }
-
-  const clear = {
-    method: 'DELETE',
-  };
-
-  fetch(`https://js2-tareas-api.netlify.app/api/tareas/${id}?uid=${uid}`, clear)
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-    });
 }
 
 // Aquí empezamos a añadir la Vista
 
 // Añadimos la lista de tarea, interactuamos con el DOM
-const list = document.getElementById('task-list');
 
 function appendTaskDOM(taskTask) {
   // Item de la lista
